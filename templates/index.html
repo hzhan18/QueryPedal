@@ -1,18 +1,32 @@
 <!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <title>QueryPedal Submission Form</title>
-  </head>
-  <body>
+</head>
+<body>
     <h1>QueryPedal</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Filename</th>
+            <th>Contents</th>
+        </tr>
+        {% for document in documents %}
+        <tr>
+            <td>{{ document.id }}</td>
+            <td>{{ document.filename }}</td>
+            <td>{{ document.contents }}</td>
+        </tr>
+        {% endfor %}
+    </table>
     <form action="/submit" method="post">
-      <label for="student_id">Student ID:</label>
-      <input type="text" id="student_id" name="student_id" required />
-      <label for="code">Code:</label>
-      <textarea id="code" name="code" required></textarea>
-      <input type="submit" value="Submit" />
+        <label for="student_id">Student ID:</label>
+        <input type="text" id="student_id" name="student_id" required />
+        <label for="code">Code:</label>
+        <textarea id="code" name="code" required></textarea>
+        <input type="submit" value="Submit" />
     </form>
-  </body>
+</body>
 </html>
