@@ -1,32 +1,148 @@
 <!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <title>QueryPedal Submission Form</title>
-</head>
-<body>
-    <h1>QueryPedal</h1>
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Filename</th>
-            <th>Contents</th>
-        </tr>
-        {% for document in documents %}
-        <tr>
-            <td>{{ document.id }}</td>
-            <td>{{ document.filename }}</td>
-            <td>{{ document.contents }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-    <form action="/submit" method="post">
-        <label for="student_id">Student ID:</label>
-        <input type="text" id="student_id" name="student_id" required />
-        <label for="code">Code:</label>
-        <textarea id="code" name="code" required></textarea>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .container {
+        width: 80%;
+        margin: auto;
+        overflow: hidden;
+      }
+      header {
+        background: #50b347;
+        color: white;
+        padding-top: 30px;
+        min-height: 70px;
+        border-bottom: #e8491d 3px solid;
+      }
+      header a {
+        color: #ffffff;
+        text-decoration: none;
+        text-transform: uppercase;
+        font-size: 16px;
+      }
+      header ul {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        overflow: hidden;
+      }
+      header li {
+        float: left;
+        display: inline;
+        padding: 0 20px 0 20px;
+      }
+      header #branding {
+        float: left;
+      }
+      header #branding h1 {
+        margin: 0;
+      }
+      header nav {
+        float: right;
+        margin-top: 10px;
+      }
+      header .highlight,
+      header .current a {
+        color: #e8491d;
+        font-weight: bold;
+      }
+      header a:hover {
+        color: #ffffff;
+        font-weight: bold;
+      }
+      textarea {
+        width: 100%;
+        margin-bottom: 20px;
+        padding: 5px;
+      }
+      input[type="submit"] {
+        padding: 10px 20px 11px !important;
+        background: #e8491d;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      input[type="submit"]:hover {
+        background: #333;
+      }
+      table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid #cccccc;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background: #50b347;
+        color: white;
+      }
+      .instruction-label {
+        font-size: 24px; /* Increased font size */
+        font-weight: bold; /* Make text bold */
+        margin-top: 50px; /* Add space from the top header */
+        display: block; /* Make it a block element to allow margin to take effect */
+      }
+      .form-label,
+      .result-heading {
+        font-size: 24px; /* Make it the same size as the instruction label */
+        font-weight: bold; /* Make text bold */
+        margin-top: 20px;
+        margin-bottom: 10px;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div id="branding">
+          <h1>QueryPedal</h1>
+        </div>
+        <nav>
+          <ul>
+            <li class="current"><a href="#">Home</a></li>
+            <!-- Add other navigation items here if necessary -->
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <!-- Instruction Submission Form -->
+      <form action="/submit-instruction" method="post">
+        <label for="instruction" class="instruction-label"
+          >Instruction For QUERYPEDAL:</label
+        >
+        <textarea id="instruction" name="instruction" rows="4"></textarea><br />
         <input type="submit" value="Submit" />
-    </form>
-</body>
+      </form>
+      <!-- Display the Last Submitted Instruction -->
+      <h2>Last Submitted Instruction:</h2>
+      <textarea id="last_instruction" name="last_instruction" rows="4" readonly>
+        {% if instruction %}{{ instruction }}{% else %}No instruction submitted yet.{% endif %}
+      </textarea>
+      <!-- Display the Last Analyzed Result -->
+      <h2>Last Analyzed Result:</h2>
+      <textarea id="analyzed_result" name="analyzed_result" rows="4" readonly>
+        {{ analyzed_result }}
+      </textarea>
+      <!-- Existing table to display documents -->
+      <!-- ... -->
+    </div>
+  </body>
 </html>
