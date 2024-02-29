@@ -7,3 +7,31 @@ hiiii
 asdaf
 adsfasdf
 123
+
+
+
+
+
+
+
+
+
+
+
+from pedal import *
+
+
+
+
+
+from pedal import *
+
+match = find_match("""
+def summate():
+    __expr__
+""")
+
+if not match: 
+    explain("You have not defined the function", label = "function_missing")
+
+assert_equal(call('summate',[1,3,5]), 9)

@@ -5,6 +5,9 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import inspect
 from sqlalchemy import MetaData
 
+from pedal import *
+
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 # Configuration for the SQLite database
