@@ -9,6 +9,7 @@ from pedal import Feedback
 import subprocess
 import tempfile
 import os
+import textwrap
 
 
 
@@ -52,26 +53,27 @@ def submit_instruction():
     print(instruction_text)
 
     student_code = """
-        def summate(values):
-            total = 0
-            for v in values:
-                total += v
-                print(total)
-            return total
+    def summate(values):
+        total = 0
+        for v in values:
+            total += v
+            print(total)
+        return total
 
-        print(summate([1, 2, 3]))
-        """
-    
+    print(summate([1, 2, 3]))
+    """
+
+    student_code = textwrap.dedent(student_code)
     print("Student Submission:")
     print(student_code)
 
     try:
     # Create temporary files for instructor script and student submission
-        with tempfile.NamedTemporaryFile(mode='w+', suffix='.py', delete=False) as instructor_script_file:
+        with tempfile.NamedTemporaryFile(mode='w+', suffix='.py', prefix='instructor_', delete=False) as instructor_script_file:
             instructor_script_file.write(instruction_text)
             instructor_script_filepath = instructor_script_file.name
 
-        with tempfile.NamedTemporaryFile(mode='w+', suffix='.py', delete=False) as student_submission_file:
+        with tempfile.NamedTemporaryFile(mode='w+', suffix='.py', prefix='student_', delete=False) as student_submission_file:
             student_submission_file.write(student_code)
             student_submission_filepath = student_submission_file.name
 
