@@ -95,12 +95,6 @@ def submit_instruction():
         os.remove(instructor_script_filepath)
         os.remove(student_submission_filepath)
 
-
-
-    # feedback_result = Feedback(instruction_text, student_code)
-    # print('feedback_result:')
-    # print(feedback_result)
-    # Save the instruction in a text file
     with open('instructions.txt', 'a') as f:
         f.write(instruction_text + "\n")
     
