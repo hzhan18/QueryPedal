@@ -5,6 +5,14 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import inspect
 from sqlalchemy import MetaData
 
+from pedal import Feedback
+import subprocess
+import tempfile
+import os
+import textwrap
+
+
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 # Configuration for the SQLite database
@@ -41,7 +49,52 @@ def home():
 def submit_instruction():
     instruction_text = request.form['instruction']
     
-    # Save the instruction in a text file
+    print("Instruction Text:")
+    print(instruction_text)
+
+    student_code = """
+    def summate(values):
+        total = 0
+        for v in values:
+            total += v
+            print(total)
+        return total
+
+    print(summate([1, 2, 3]))
+    """
+
+    student_code = textwrap.dedent(student_code)
+    print("Student Submission:")
+    print(student_code)
+
+    try:
+    # Create temporary files for instructor script and student submission
+        with tempfile.NamedTemporaryFile(mode='w+', suffix='.py', prefix='instructor_', delete=False) as instructor_script_file:
+            instructor_script_file.write(instruction_text)
+            instructor_script_filepath = instructor_script_file.name
+
+        with tempfile.NamedTemporaryFile(mode='w+', suffix='.py', prefix='student_', delete=False) as student_submission_file:
+            student_submission_file.write(student_code)
+            student_submission_filepath = student_submission_file.name
+
+            # Construct the Pedal CLI command
+        pedal_command = f"pedal feedback {instructor_script_filepath} {student_submission_filepath}"
+
+        # Run the Pedal command using subprocess
+        result = subprocess.run(pedal_command, shell=True, capture_output=True, text=True)
+
+        # Get the output and return it as a JSON response
+        print("result:")
+        print(result.stdout)
+            
+    # except Exception as e:
+    #     # Handle errors, if any
+    #     return jsonify({'result': 'error', 'error_message': str(e)})
+    finally:
+        # Cleanup: remove temporary files
+        os.remove(instructor_script_filepath)
+        os.remove(student_submission_filepath)
+
     with open('instructions.txt', 'a') as f:
         f.write(instruction_text + "\n")
     
