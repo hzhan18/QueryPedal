@@ -34,6 +34,8 @@ class CodeState(db.Model):
 @app.route('/')
 def home():
     instruction = request.args.get('instruction')
+    passed_count = request.args.get('passed_count')
+    total_submissions = request.args.get('total_submissions')
     try:
         documents = CodeState.query.limit(100).all()
         # If there's no instruction from submission, try to read the last instruction from file
@@ -43,7 +45,7 @@ def home():
                     instruction = f.readlines()[-1].strip()  # Read the last line as the latest instruction
             except FileNotFoundError:
                 instruction = "No instruction submitted yet."
-        return render_template('index.html', documents=documents, instruction=instruction)
+        return render_template('index.html', documents=documents, instruction=instruction, passed_count=passed_count, total_submissions=total_submissions)
     except Exception as e:
         return str(e)  # display the error on the web page
 
@@ -134,8 +136,7 @@ def submit_instruction():
         f.write(instruction_text + "\n")
     
     # Optionally, redirect to a new page or back to the home page
-    return redirect(url_for('home', instruction=instruction_text))
-
+    return redirect(url_for('home', instruction=instruction_text, passed_count=passed_count, total_submissions=len(submissions)))
 
 
 if __name__ == '__main__':
@@ -143,7 +144,4 @@ if __name__ == '__main__':
         # Check if there's data in the CodeState table
         if not CodeState.query.first():
             print("No data found in the database.")
-        
-         
-        
     app.run(debug=True)

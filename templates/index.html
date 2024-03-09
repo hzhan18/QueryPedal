@@ -139,8 +139,13 @@
       <!-- Display the Last Analyzed Result -->
       <h2>Last Analyzed Result:</h2>
       <textarea id="analyzed_result" name="analyzed_result" rows="4" readonly>
-        {{ analyzed_result }}
-      </textarea>
+    {% if passed_count and total_submissions %}
+        Passed Count: {{ passed_count }} / Total Submissions: {{ total_submissions }}
+    {% else %}
+        Loading Analyzed Result...
+    {% endif %}
+</textarea
+      >
       <!-- Existing table to display documents -->
       <!-- ... -->
     </div>
