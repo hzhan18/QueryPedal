@@ -29,6 +29,7 @@ class CodeState(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(255), nullable=False)
     contents = db.Column(db.Text, nullable=False)
+    contenttype = db.Column(db.String(50), nullable=False)
 
 
 @app.route('/')
