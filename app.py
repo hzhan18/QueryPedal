@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-import os, random, re, time
+import os, re, time
 from sqlalchemy.sql import func
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import inspect
@@ -67,7 +67,7 @@ def submit_instruction():
     # Fetch the student submission from the CodeState table
     # submissions = CodeState.query.all()
     ### Limit the number of submissions to 200 for testing
-    submissions = CodeState.query.limit(200).all()
+    submissions = CodeState.query.limit(400).all()
     ### Fetch the last 200 submissions for testing
     # submissions = CodeState.query.order_by(CodeState.id.desc()).limit(200).all()[::-1]
 
@@ -145,13 +145,16 @@ def submit_instruction():
 
     with open('instructions.txt', 'a') as f:
         f.write(instruction_text + "\n")
+
+    invalid_count = json_count + empty_count
+    incorrect_count = total_submissions - passed_count - invalid_count
     
     # End the timer
     end_time = time.time()
     processing_time = end_time - start_time
     print("Time taken:", processing_time)
 
-    return render_template('index.html', instruction=instruction_text, passed_count=passed_count, 
+    return render_template('index.html', instruction=instruction_text, passed_count=passed_count, invalid_count=invalid_count, incorrect_count=incorrect_count,
                        total_submissions=total_submissions, processing_time=processing_time)
 
 
