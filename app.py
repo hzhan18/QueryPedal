@@ -34,7 +34,7 @@ class CodeState(db.Model):
 
 @app.route('/')
 def home():
-    instruction = request.args.get('instruction')
+    instruction = request.args.get('instruction', "from pedal import *")
     passed_count = request.args.get('passed_count')
     total_submissions = request.args.get('total_submissions')
     try:

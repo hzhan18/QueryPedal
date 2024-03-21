@@ -270,3 +270,13 @@ def summate():
 match = find_match("_accumulator_ = 0")
 if match["_accumulator_"].id == "sum":
     gently("Do not name your accumulating variable `sum`, since that is a reserved word.", "shadowed_builtin")
+match = find_match("""
+def summate():
+    __expr__
+""")
+        match = find_match("""
+def summate():
+    __expr__
+""")
+from pedal import *
+
