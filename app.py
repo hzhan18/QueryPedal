@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
-import os, random
+import os, random, re, time
 from sqlalchemy.sql import func
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import inspect
@@ -8,18 +8,13 @@ from sqlalchemy import MetaData
 from pedal import Feedback
 import subprocess
 import tempfile
-import os
 import textwrap
-
-from utils import is_json 
-import re
-
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 # Configuration for the SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = \
-        'sqlite:///' + os.path.join(basedir, 'cleansampledata.db')
+        'sqlite:///' + os.path.join(basedir, 'rawdataset.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -37,6 +32,7 @@ def home():
     instruction = request.args.get('instruction', "from pedal import *")
     passed_count = request.args.get('passed_count')
     total_submissions = request.args.get('total_submissions')
+    processing_time = request.args.get('processing_time')
     try:
         documents = CodeState.query.limit(100).all()
         # If there's no instruction from submission, try to read the last instruction from file
@@ -46,7 +42,8 @@ def home():
                     instruction = f.readlines()[-1].strip()  # Read the last line as the latest instruction
             except FileNotFoundError:
                 instruction = "No instruction submitted yet."
-        return render_template('index.html', documents=documents, instruction=instruction, passed_count=passed_count, total_submissions=total_submissions)
+        return render_template('index.html', documents=documents, instruction=instruction, 
+                               passed_count=passed_count, total_submissions=total_submissions, processing_time=processing_time)
     except Exception as e:
         return str(e)  # display the error on the web page
 
@@ -57,36 +54,34 @@ def submit_instruction():
     print("Instruction Text:")
     print(instruction_text)
 
-    # student_code = """
-    # def summate(values):
-    #     total = 0
-    #     for v in values:
-    #         total += v
-    #         print(total)
-    #     return total
+    # Start the timer
+    start_time = time.time()
 
-    # print(summate([1, 2, 3]))
-    # """
-
-    # Initialize the passed count
+    # Initialize the counters
     passed_count = 0
+    json_count = 0
+    empty_count = 0
+    code_count = 0
 
     # Fetch the student submission from the CodeState table
     submissions = CodeState.query.all()
+    ### Limit the number of submissions to 200 for testing
+    ### submissions = CodeState.query.limit(200).all()
+    ### Fetch the last 200 submissions for testing
+    ### submissions = CodeState.query.order_by(CodeState.id.desc()).limit(200).all()[::-1]
+
 
     # Loop through the submissions
     for submission in submissions:
-        student_code = submission.contents
-
-    # # retrieve the student submission from the database
-    # submission = CodeState.query.order_by(func.random()).first()
-    # student_code = submission.contents
-
-        # check if the submission is JSON, skip if true
-        if is_json(submission.contents):
-            print("Skipping JSON content")
-            
+        # Determine the content type and increment the counter
+        if submission.contenttype == "empty":
+            empty_count += 1
+        elif submission.contenttype == "json":
+            json_count += 1 
         else:
+            code_count += 1
+            # Get the student code from the submission
+            student_code = submission.contents
             # format the student code
             student_code = textwrap.dedent(student_code)
             print("Student Submission:")
@@ -130,14 +125,32 @@ def submit_instruction():
                 os.remove(instructor_script_filepath)
                 os.remove(student_submission_filepath)
 
-    print("Number of submission passed", passed_count)
-    print("Total number of submission", len(submissions))
+    # Print the final counts at the end of the loop for the testing stage, not reflected in the web page
+    print("Number of passed submission", passed_count)
+    print("Number of code submission", code_count)
+    print("Number of json submission", json_count)
+    print("Number of empty submission", empty_count)
+    print("Total number of submissions", len(submissions))
+
+    if len(submissions) != 200:
+        print("Error: Total number of the submissions does not match the expected number.")
+    elif len(submissions) != code_count + json_count + empty_count:
+        print("Error.")
+    else:
+        print("All good.")
+
 
     with open('instructions.txt', 'a') as f:
         f.write(instruction_text + "\n")
     
+    # End the timer
+    end_time = time.time()
+    processing_time = end_time - start_time
+    print("Time taken:", processing_time)
+
     # Optionally, redirect to a new page or back to the home page
-    return redirect(url_for('home', instruction=instruction_text, passed_count=passed_count, total_submissions=len(submissions)))
+    return redirect(url_for('home', instruction=instruction_text, passed_count=passed_count, 
+                            total_submissions=len(submissions), processing_time=processing_time))
 
 
 if __name__ == '__main__':

@@ -148,6 +148,17 @@ from pedal import *</textarea
     {% endif %}
 </textarea
       >
+      
+      <!-- Display the Processing Time -->
+      <h2>Processing Time:</h2>
+      <textarea id="processing_time" name="processing_time" rows="4" readonly>
+    {% if processing_time %}
+        {{ processing_time }}
+    {% else %}
+        Loading Processing Time... 
+    {% endif %}
+      </textarea>
+
       <!-- Existing table to display documents -->
       <!-- ... -->
     </div>
