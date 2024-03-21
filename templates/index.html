@@ -126,16 +126,35 @@
       <!-- Instruction Submission Form -->
       <form action="/submit-instruction" method="post">
         <!-- Hidden input field for dynamic values -->
-        <input type="hidden" name="passed_count" id="passed_count" value="{{ passed_count }}">
-        <input type="hidden" name="total_submissions" id="total_submissions" value="{{ total_submissions }}">
-        <input type="hidden" name="processing_time" id="processing_time" value="{{ processing_time }}">
-        
+        <input
+          type="hidden"
+          name="passed_count"
+          id="passed_count"
+          value="{{ passed_count }}"
+        />
+        <input
+          type="hidden"
+          name="total_submissions"
+          id="total_submissions"
+          value="{{ total_submissions }}"
+        />
+        <input
+          type="hidden"
+          name="processing_time"
+          id="processing_time"
+          value="{{ processing_time }}"
+        />
+
         <!-- Instruction textarea -->
-        <label for="instruction" class="instruction-label">Instructions for QueryPedal:</label>
-        <textarea id="instruction" name="instruction" rows="4">from pedal import *</textarea>
-        
-        <br>
-        
+        <label for="instruction" class="instruction-label"
+          >Instructions for QueryPedal:</label
+        >
+        <textarea id="instruction" name="instruction" rows="4">
+from pedal import *</textarea
+        >
+
+        <br />
+
         <input type="submit" value="Submit" />
       </form>
 
@@ -145,28 +164,30 @@
         {% if instruction %}{{ instruction }}{% else %}No instruction submitted yet.{% endif %}
       </textarea>
       <!-- Display the Last Analyzed Result -->
+      <!-- Display the Last Analyzed Result -->
       <h2>Last Analyzed Result:</h2>
       <textarea id="analyzed_result" name="analyzed_result" rows="5" readonly>
-    {% if passed_count and total_submissions and invalid_count and incorrect_count %}
-        Total Submissions: {{ total_submissions }}
-        Passed Submissions: {{ passed_count }}
-        Failed Submissions: {{ incorrect_count }}
-        Invalid Code: {{ invalid_count }}
-    {% else %}
-        Loading Analyzed Result...
-    {% endif %}
+{% if results_loading %}
+    Loading Analyzed Result...
+{% elif passed_count and total_submissions and invalid_count and incorrect_count %}
+    Total Submissions: {{ total_submissions }}
+    Passed Submissions: {{ passed_count }}
+    Failed Submissions: {{ incorrect_count }}
+    Invalid Code: {{ invalid_count }}
+{% endif %}
 </textarea
       >
-      
+
       <!-- Display the Processing Time -->
       <h2>Processing Time:</h2>
       <textarea id="processing_time" name="processing_time" rows="4" readonly>
-    {% if processing_time %}
-        {{ '%.2f' | format(processing_time) }} Seconds
-    {% else %}
-        Loading Processing Time... 
-    {% endif %}
-      </textarea>
+{% if form_submitted and not processing_time %}
+    Loading Processing Time...
+{% elif processing_time %}
+    {{ '%.2f' | format(processing_time) }} Seconds
+{% endif %}
+</textarea
+      >
 
       <!-- Existing table to display documents -->
       <!-- ... -->
