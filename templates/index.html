@@ -125,14 +125,20 @@
     <div class="container">
       <!-- Instruction Submission Form -->
       <form action="/submit-instruction" method="post">
-        <label for="instruction" class="instruction-label"
-          >Instruction For QueryPedal:</label
-        >
-        <textarea id="instruction" name="instruction" rows="4">
-from pedal import *</textarea
-        ><br />
+        <!-- Hidden input field for dynamic values -->
+        <input type="hidden" name="passed_count" id="passed_count" value="{{ passed_count }}">
+        <input type="hidden" name="total_submissions" id="total_submissions" value="{{ total_submissions }}">
+        <input type="hidden" name="processing_time" id="processing_time" value="{{ processing_time }}">
+        
+        <!-- Instruction textarea -->
+        <label for="instruction" class="instruction-label">Instructions for QueryPedal:</label>
+        <textarea id="instruction" name="instruction" rows="4">from pedal import *</textarea>
+        
+        <br>
+        
         <input type="submit" value="Submit" />
       </form>
+
       <!-- Display the Last Submitted Instruction -->
       <h2>Last Submitted Instruction:</h2>
       <textarea id="last_instruction" name="last_instruction" rows="4" readonly>
