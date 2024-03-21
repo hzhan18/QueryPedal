@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request
 import os, random, re, time
 from sqlalchemy.sql import func
 from flask_sqlalchemy import SQLAlchemy
@@ -12,6 +12,7 @@ import textwrap
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
+
 # Configuration for the SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = \
         'sqlite:///' + os.path.join(basedir, 'rawdataset.db')
@@ -64,12 +65,14 @@ def submit_instruction():
     code_count = 0
 
     # Fetch the student submission from the CodeState table
-    submissions = CodeState.query.all()
+    # submissions = CodeState.query.all()
     ### Limit the number of submissions to 200 for testing
-    ### submissions = CodeState.query.limit(200).all()
+    submissions = CodeState.query.limit(200).all()
     ### Fetch the last 200 submissions for testing
-    ### submissions = CodeState.query.order_by(CodeState.id.desc()).limit(200).all()[::-1]
+    # submissions = CodeState.query.order_by(CodeState.id.desc()).limit(200).all()[::-1]
 
+    # Define total submissions
+    total_submissions = len(submissions)
 
     # Loop through the submissions
     for submission in submissions:
@@ -117,9 +120,9 @@ def submit_instruction():
                     if score == 1:
                         passed_count += 1
 
-            # except Exception as e:
-            #     # Handle errors, if any
-            #     return jsonify({'result': 'error', 'error_message': str(e)})
+            except Exception as e:
+                # Handle errors, if any
+                print(f"Error occurred: {e}")
             finally:
                 # Cleanup: remove temporary files
                 os.remove(instructor_script_filepath)
@@ -148,9 +151,8 @@ def submit_instruction():
     processing_time = end_time - start_time
     print("Time taken:", processing_time)
 
-    # Optionally, redirect to a new page or back to the home page
-    return redirect(url_for('home', instruction=instruction_text, passed_count=passed_count, 
-                            total_submissions=len(submissions), processing_time=processing_time))
+    return render_template('index.html', instruction=instruction_text, passed_count=passed_count, 
+                       total_submissions=total_submissions, processing_time=processing_time)
 
 
 if __name__ == '__main__':
