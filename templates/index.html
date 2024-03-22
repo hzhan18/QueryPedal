@@ -115,7 +115,7 @@
         </div>
         <nav>
           <ul>
-            <li class="current"><a href="#">Home</a></li>
+            <li class="current"><a href="/">Home</a></li>
             <!-- Add other navigation items here if necessary -->
           </ul>
         </nav>
@@ -125,26 +125,6 @@
     <div class="container">
       <!-- Instruction Submission Form -->
       <form action="/submit-instruction" method="post">
-        <!-- Hidden input field for dynamic values -->
-        <input
-          type="hidden"
-          name="passed_count"
-          id="passed_count"
-          value="{{ passed_count }}"
-        />
-        <input
-          type="hidden"
-          name="total_submissions"
-          id="total_submissions"
-          value="{{ total_submissions }}"
-        />
-        <input
-          type="hidden"
-          name="processing_time"
-          id="processing_time"
-          value="{{ processing_time }}"
-        />
-
         <!-- Instruction textarea -->
         <label for="instruction" class="instruction-label"
           >Instructions for QueryPedal:</label
@@ -169,7 +149,7 @@ from pedal import *</textarea
       <textarea id="analyzed_result" name="analyzed_result" rows="5" readonly>
 {% if results_loading %}
     Loading Analyzed Result...
-{% elif passed_count and total_submissions and invalid_count and incorrect_count %}
+{% elif total_submissions %}
     Total Submissions: {{ total_submissions }}
     Passed Submissions: {{ passed_count }}
     Failed Submissions: {{ incorrect_count }}

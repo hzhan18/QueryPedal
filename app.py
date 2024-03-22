@@ -63,6 +63,9 @@ def submit_instruction():
     json_count = 0
     empty_count = 0
     code_count = 0
+    invalid_count = 0
+    incorrect_count = 0
+
 
     # Fetch the student submission from the CodeState table
     # submissions = CodeState.query.all()
