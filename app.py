@@ -52,8 +52,25 @@ def home():
 def submit_instruction():
     instruction_text = request.form['instruction']
     
-    print("Instruction Text:")
-    print(instruction_text)
+    try:
+        # Check instructor script syntax
+        with tempfile.NamedTemporaryFile(mode='w+', suffix='.py', prefix='instructor_', delete=False) as instructor_script_file:
+            instructor_script_file.write(instruction_text)
+            instructor_script_filepath = instructor_script_file.name
+        
+        # Check syntax using compile()
+        with open(instructor_script_filepath, 'r') as f:
+            compile(f.read(), instructor_script_filepath, 'exec')
+
+    except SyntaxError as e:
+        # Handle syntax errors in the instructor script
+        return render_template('index.html', error_message=f"Syntax Error in Instructor Script: {e}")
+    except Exception as e:
+        # Handle other exceptions
+        return render_template('index.html', error_message=f"Error occurred: {e}")
+    finally:
+        # Cleanup: remove temporary file
+        os.remove(instructor_script_filepath)
 
     # Start the timer
     start_time = time.time()

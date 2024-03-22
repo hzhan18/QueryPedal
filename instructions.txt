@@ -355,6 +355,7 @@ from pedal import *
 from pedal import *
 from pedal import *
 from pedal import *
+<<<<<<< Updated upstream
 from pedal impor
 from pedal import *
 
@@ -392,6 +393,16 @@ if not match:
 
 assert_equal(call('summate',[1,3,5]), 9)
       
+=======
+from pedal import *
+from pedal import *
+from pedal import *
+from pedal impor
+from pedal import *
+from pedal import *
+from pedal import *
+from pedal import *
+>>>>>>> Stashed changes
 from pedal import *
 from pedal import *
 
@@ -416,3 +427,35 @@ if not match:
     explain("You have not defined the function", label = "function_missing")
 
 assert_equal(call('summate',[1,3,5]), 9)
+<<<<<<< Updated upstream
+=======
+from pedal import *
+from pedal import *
+from pedal import *
+
+match = find_match("""
+def summate():
+    __expr__
+""")
+
+if not match: 
+    explain("You have not defined the function", label = "function_missing")
+
+assert_equal(call('summate',[1,3,5]), 9)
+from pedal import *
+>>>>>>> Stashed changes
+from pedal import *
+from pedal import *
+from pedal import *
+from pedal import *
+
+match = find_match("""
+def summate():
+    __expr__
+""")
+
+if not match: 
+    explain("You have not defined the function", label = "function_missing")
+
+assert_equal(call('summate',[1,3,5]), 9)
+from pedal import *

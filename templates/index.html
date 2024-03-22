@@ -154,6 +154,8 @@ from pedal import *</textarea
     Passed Submissions: {{ passed_count }}
     Failed Submissions: {{ incorrect_count }}
     Invalid Code: {{ invalid_count }}
+{% elif error_message %}
+    error message: {{ error_message }}
 {% endif %}
 </textarea
       >
