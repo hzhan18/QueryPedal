@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 # Configuration for the SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = \
-        'sqlite:///' + os.path.join(basedir, 'rawdataset.db')
+        'sqlite:///' + os.path.join(basedir, 'cleandataset.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -77,8 +77,6 @@ def submit_instruction():
 
     # Initialize the counters
     passed_count = 0
-    json_count = 0
-    empty_count = 0
     code_count = 0
     invalid_count = 0
     incorrect_count = 0
@@ -87,7 +85,7 @@ def submit_instruction():
     # Fetch the student submission from the CodeState table
     # submissions = CodeState.query.all()
     ### Limit the number of submissions to 200 for testing
-    submissions = CodeState.query.limit(400).all()
+    submissions = CodeState.query.limit(200).all()
     ### Fetch the last 200 submissions for testing
     # submissions = CodeState.query.order_by(CodeState.id.desc()).limit(200).all()[::-1]
 
@@ -97,11 +95,7 @@ def submit_instruction():
     # Loop through the submissions
     for submission in submissions:
         # Determine the content type and increment the counter
-        if submission.contenttype == "empty":
-            empty_count += 1
-        elif submission.contenttype == "json":
-            json_count += 1 
-        else:
+        if submission.contenttype == "code":
             code_count += 1
             # Get the student code from the submission
             student_code = submission.contents
@@ -148,25 +142,18 @@ def submit_instruction():
                 os.remove(instructor_script_filepath)
                 os.remove(student_submission_filepath)
 
+        else:
+            invalid_count += 1
+
     # Print the final counts at the end of the loop for the testing stage, not reflected in the web page
     print("Number of passed submission", passed_count)
     print("Number of code submission", code_count)
-    print("Number of json submission", json_count)
-    print("Number of empty submission", empty_count)
+    print("Number of invalid submission", invalid_count)
     print("Total number of submissions", len(submissions))
-
-    if len(submissions) != 200:
-        print("Error: Total number of the submissions does not match the expected number.")
-    elif len(submissions) != code_count + json_count + empty_count:
-        print("Error.")
-    else:
-        print("All good.")
-
 
     with open('instructions.txt', 'a') as f:
         f.write(instruction_text + "\n")
 
-    invalid_count = json_count + empty_count
     incorrect_count = total_submissions - passed_count - invalid_count
     
     # End the timer
