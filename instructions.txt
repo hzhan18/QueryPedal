@@ -493,3 +493,7 @@ ensure_function_call('print')
 
 from pedal import *
 ensure_function_call('print')
+from pedal import *
+from pedal import *
+from pedal import *
+from pedal import *

@@ -1,178 +1,197 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>QueryPedal Submission Form</title>
     <style>
+      :root {
+        --main-bg-color: #009688;
+        --main-text-color: #fff;
+        --accent-color: #ff5722;
+        --neutral-light: #f5f5f5;
+        --shadow-color: rgba(0, 0, 0, 0.2);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
       body {
-        font-family: "Arial", sans-serif;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         margin: 0;
         padding: 0;
-        background-color: #f4f4f4;
+        background: var(--neutral-light);
+        color: var(--main-text-color);
       }
-      .container {
-        width: 80%;
-        margin: auto;
-        overflow: hidden;
+
+      .wrapper {
+        display: grid;
+        grid-template-columns: 1fr;
+        min-height: 100vh;
+        grid-template-areas:
+          "nav"
+          "main";
       }
-      header {
-        background: #50b347;
-        color: white;
-        padding-top: 30px;
-        min-height: 70px;
-        border-bottom: #e8491d 3px solid;
+
+      nav {
+        grid-area: nav;
+        background: var(--main-bg-color);
+        padding: 1rem;
+        text-align: center;
+        box-shadow: 0 2px 5px var(--shadow-color);
       }
-      header a {
-        color: #ffffff;
-        text-decoration: none;
-        text-transform: uppercase;
-        font-size: 16px;
-      }
-      header ul {
-        padding: 0;
+
+      nav h1 {
         margin: 0;
-        list-style: none;
+        font-size: 2rem;
+      }
+
+      .main-content {
+        grid-area: main;
+        padding: 2rem;
+        display: grid;
+        grid-gap: 2rem;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      }
+
+      .card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 2px 10px var(--shadow-color);
+        position: relative;
         overflow: hidden;
+        transition: transform 0.3s ease-in-out;
       }
-      header li {
-        float: left;
-        display: inline;
-        padding: 0 20px 0 20px;
+
+      .card:hover {
+        transform: translateY(-5px);
       }
-      header #branding {
-        float: left;
+
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: linear-gradient(
+          to bottom right,
+          var(--main-bg-color),
+          var(--accent-color)
+        );
+        z-index: -1;
+        transform: scaleY(0);
+        transform-origin: top;
+        transition: transform 0.3s ease-in-out;
       }
-      header #branding h1 {
-        margin: 0;
+
+      .card:hover::before {
+        transform: scaleY(1);
       }
-      header nav {
-        float: right;
-        margin-top: 10px;
+
+      .card h2 {
+        font-size: 1.5rem;
+        color: var(--main-bg-color);
+        margin-top: 0;
       }
-      header .highlight,
-      header .current a {
-        color: #e8491d;
-        font-weight: bold;
+
+      .card:hover h2 {
+        color: var(--neutral-light);
       }
-      header a:hover {
-        color: #ffffff;
-        font-weight: bold;
-      }
-      textarea {
+
+      textarea,
+      .result-display {
         width: 100%;
-        margin-bottom: 20px;
-        padding: 5px;
-      }
-      input[type="submit"] {
-        padding: 10px 20px 11px !important;
-        background: #e8491d;
-        color: white;
+        padding: 1rem;
+        margin-top: 1rem;
         border: none;
-        border-radius: 5px;
-        cursor: pointer;
+        border-radius: 4px;
+        background: var(--neutral-light);
+        box-shadow: inset 0 2px 5px var(--shadow-color);
+        resize: vertical;
+        color: #000; /* Changed to black */
       }
-      input[type="submit"]:hover {
-        background: #333;
-      }
-      table {
-        width: 100%;
-        margin-top: 20px;
-        border-collapse: collapse;
-      }
-      table,
-      th,
-      td {
-        border: 1px solid #cccccc;
-        padding: 10px;
-        text-align: left;
-      }
-      th {
-        background: #50b347;
-        color: white;
-      }
-      .instruction-label {
-        font-size: 24px; /* Increased font size */
-        font-weight: bold; /* Make text bold */
-        margin-top: 50px; /* Add space from the top header */
-        display: block; /* Make it a block element to allow margin to take effect */
-      }
-      .form-label,
-      .result-heading {
-        font-size: 24px; /* Make it the same size as the instruction label */
-        font-weight: bold; /* Make text bold */
-        margin-top: 20px;
-        margin-bottom: 10px;
+
+      .submit-btn {
         display: block;
+        width: 100%;
+        padding: 1rem;
+        margin-top: 1.5rem;
+        border: none;
+        border-radius: 4px;
+        color: var(--main-text-color);
+        background: var(--accent-color);
+        box-shadow: 0 2px 5px var(--shadow-color);
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .submit-btn:hover {
+        background: #ef6c00;
+      }
+
+      @media (max-width: 768px) {
+        .main-content {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>
   <body>
-    <header>
-      <div class="container">
-        <div id="branding">
-          <h1>QueryPedal</h1>
-        </div>
-        <nav>
-          <ul>
-            <li class="current"><a href="/">Home</a></li>
-            <!-- Add other navigation items here if necessary -->
-          </ul>
-        </nav>
-      </div>
-    </header>
-
-    <div class="container">
-      <!-- Instruction Submission Form -->
-      <form action="/submit-instruction" method="post">
-        <!-- Instruction textarea -->
-        <label for="instruction" class="instruction-label"
-          >Instructions for QueryPedal:</label
-        >
-        <textarea id="instruction" name="instruction" rows="4">
+    <div class="wrapper">
+      <nav>
+        <h1>QueryPedal</h1>
+      </nav>
+      <div class="main-content">
+        <!-- Instruction Submission Form -->
+        <div class="card">
+          <form action="/submit-instruction" method="post">
+            <h2>Submit Your Instruction</h2>
+            <textarea
+              id="instruction"
+              name="instruction"
+              rows="6"
+              placeholder="Enter instruction code here..."
+            >
 from pedal import *</textarea
-        >
-
-        <br />
-
-        <input type="submit" value="Submit" />
-      </form>
-
-      <!-- Display the Last Submitted Instruction -->
-      <h2>Last Submitted Instruction:</h2>
-      <textarea id="last_instruction" name="last_instruction" rows="4" readonly>
-        {% if instruction %}{{ instruction }}{% else %}No instruction submitted yet.{% endif %}
-      </textarea>
-      <!-- Display the Last Analyzed Result -->
-      <!-- Display the Last Analyzed Result -->
-      <h2>Last Analyzed Result:</h2>
-      <textarea id="analyzed_result" name="analyzed_result" rows="5" readonly>
-{% if results_loading %}
-    Loading Analyzed Result...
-{% elif total_submissions %}
-    Total Submissions: {{ total_submissions }}
-    Passed Submissions: {{ passed_count }}
-    Failed Submissions: {{ incorrect_count }}
-    Invalid Code: {{ invalid_count }}
-{% elif error_message %}
-    error message: {{ error_message }}
-{% endif %}
-</textarea
-      >
-
-      <!-- Display the Processing Time -->
-      <h2>Processing Time:</h2>
-      <textarea id="processing_time" name="processing_time" rows="4" readonly>
-{% if form_submitted and not processing_time %}
-    Loading Processing Time...
-{% elif processing_time %}
-    {{ '%.2f' | format(processing_time) }} Seconds
-{% endif %}
-</textarea
-      >
-
-      <!-- Existing table to display documents -->
-      <!-- ... -->
+            >
+            <button type="submit" class="submit-btn">Send Instruction</button>
+          </form>
+        </div>
+        <!-- Last Submitted Instruction -->
+        <div class="card">
+          <h2>Last Submitted Instruction</h2>
+          <div class="result-display" id="last_instruction">
+            <!-- Server-side template logic to display the last instruction -->
+            {% if instruction %}{{ instruction }}{% else %}No instruction
+            submitted yet.{% endif %}
+          </div>
+        </div>
+        <!-- Last Analyzed Result -->
+        <div class="card">
+          <h2>Last Analyzed Result</h2>
+          <div class="result-display" id="analyzed_result">
+            <!-- Server-side template logic to display the analyzed result -->
+            {% if results_loading %} Loading Analyzed Result... {% elif
+            total_submissions %} Total Submissions: {{ total_submissions }}
+            Passed Submissions: {{ passed_count }} Failed Submissions: {{
+            incorrect_count }} Invalid Code: {{ invalid_count }} {% elif
+            error_message %} Error Message: {{ error_message }} {% endif %}
+          </div>
+        </div>
+        <!-- Processing Time -->
+        <div class="card">
+          <h2>Processing Time</h2>
+          <div class="result-display" id="processing_time">
+            <!-- Server-side template logic for displaying processing time -->
+            {% if form_submitted and not processing_time %} Loading Processing
+            Time... {% elif processing_time %} {{ '%.2f' |
+            format(processing_time) }} Seconds {% endif %}
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>
