@@ -165,8 +165,10 @@ from pedal import *</textarea
           <h2>Last Submitted Instruction</h2>
           <div class="result-display" id="last_instruction">
             <!-- Server-side template logic to display the last instruction -->
-            {% if instruction %}{{ instruction }}{% else %}No instruction
-            submitted yet.{% endif %}
+            {% if instruction %}
+              {{ instruction }}
+            {% else %}
+              No instruction submitted yet.{% endif %}
           </div>
         </div>
         <!-- Last Analyzed Result -->
@@ -174,11 +176,16 @@ from pedal import *</textarea
           <h2>Last Analyzed Result</h2>
           <div class="result-display" id="analyzed_result">
             <!-- Server-side template logic to display the analyzed result -->
-            {% if results_loading %} Loading Analyzed Result... {% elif
-            total_submissions %} Total Submissions: {{ total_submissions }}
-            Passed Submissions: {{ passed_count }} Failed Submissions: {{
-            incorrect_count }} Invalid Code: {{ invalid_count }} {% elif
-            error_message %} Error Message: {{ error_message }} {% endif %}
+            {% if results_loading %} 
+              Loading Analyzed Result... 
+            {% elif total_submissions %} 
+              Total Submissions: {{ total_submissions }} <br>
+              Passed Submissions: {{ passed_count }} <br>
+              Failed Submissions: {{incorrect_count }} <br>
+              Invalid Code: {{ invalid_count }} <br>
+            {% elif error_message %} 
+              Error Message: {{ error_message }} 
+            {% endif %}
           </div>
         </div>
         <!-- Processing Time -->
@@ -186,9 +193,10 @@ from pedal import *</textarea
           <h2>Processing Time</h2>
           <div class="result-display" id="processing_time">
             <!-- Server-side template logic for displaying processing time -->
-            {% if form_submitted and not processing_time %} Loading Processing
-            Time... {% elif processing_time %} {{ '%.2f' |
-            format(processing_time) }} Seconds {% endif %}
+            {% if form_submitted and not processing_time %} 
+              Loading Processing Time... 
+            {% elif processing_time %} 
+              {{ '%.2f' | format(processing_time) }} Seconds {% endif %}
           </div>
         </div>
       </div>
