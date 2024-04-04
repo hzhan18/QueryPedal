@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request
-import os, re, time
+from flask import Flask, render_template, request, send_file
+import os, re, time, csv
 from sqlalchemy.sql import func
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import inspect
@@ -169,6 +169,8 @@ def submit_instruction():
     # Check if the counts match the total number of submissions
     if code_count != failed_count + passed_count + invalid_count:
         print("Counts do not match")
+    elif code_count != total_submissions:
+        print("Counts do not match")
     else:
         print("Counts match")
     
@@ -177,9 +179,30 @@ def submit_instruction():
     processing_time = end_time - start_time
     print("Time taken:", processing_time)
 
+    # Get the current date
+    current_date = time.strftime('%Y-%m-%d') # Format: YYYY-MM-DD
+
+    # Summarize the results
+    analyzed_results = {'Date': current_date,
+                        'Total': total_submissions, 
+                        'Passed': passed_count, 
+                        'Invalid': invalid_count, 
+                        'Failed': failed_count, 
+                        'Processing Time': f"{processing_time: .2f} seconds"}
+    
+    # Save the results to a CSV file
+    with open('analyzed_results.csv', 'w', newline='') as csvfile:
+        fieldnames = ['Date','Total', 'Passed', 'Invalid', 'Failed', 'Processing Time']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerow(analyzed_results)
+
     return render_template('index.html', instruction=instruction_text, passed_count=passed_count, invalid_count=invalid_count, failed_count=failed_count,
                        total_submissions=total_submissions, processing_time=processing_time)
 
+@app.route('/export-results')
+def export_results():
+    return send_file('analyzed_results.csv', as_attachment=True, download_name='analyzed_results.csv')
 
 if __name__ == '__main__':
     with app.app_context():

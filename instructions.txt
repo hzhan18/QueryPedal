@@ -649,3 +649,26 @@ from pedal import *
 ensure_ast("Assert", at_least=3)
 
 ensure_coverage(.9)
+from pedal import *
+from pedal import *
+
+prevent_ast("For", at_most=2)
+ensure_ast("For", at_least=1)
+from pedal import *
+
+prevent_ast("For", at_most=2)
+ensure_ast("For", at_least=1)
+from pedal import *
+
+prevent_ast("For", at_most=2)
+ensure_ast("For", at_least=1)
+from pedal import *
+
+prevent_ast("For", at_most=2)
+ensure_ast("For", at_least=1)
+from pedal import *
+
+prevent_ast("For", at_most=2)
+ensure_ast("For", at_least=1)
+from pedal import *
+from pedal import *
