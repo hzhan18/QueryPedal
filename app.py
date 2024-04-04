@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 # Configuration for the SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = \
-        'sqlite:///' + os.path.join(basedir, 'cleandataset.db')
+        'sqlite:///' + os.path.join(basedir, '20testentries.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -76,10 +76,10 @@ def submit_instruction():
     start_time = time.time()
 
     # Initialize the counters
-    passed_count = 0
     code_count = 0
+    passed_count = 0
     invalid_count = 0
-    incorrect_count = 0
+    failed_count = 0
 
 
     # Fetch the student submission from the CodeState table
@@ -133,6 +133,17 @@ def submit_instruction():
                     # Increment the score count
                     if score == 1:
                         passed_count += 1
+                    else:
+                        # Extract the feedback from the output
+                        label_match = re.search(r"Label: (.+)", result.stdout)
+                        if label_match:
+                            label = label_match.group(1)
+                            if label in ('indentation_error', 'syntax_error', 'initialization_problem', 'type_error','name_error', 'unexpected_error', 
+                                         'value_error', 'unused_variable', 'unused_function', 'unused_parameter', 'unused_import', 'unused_class', 'unused_method'):
+                                invalid_count += 1
+                            else:
+                                failed_count += 1
+                        
 
             except Exception as e:
                 # Handle errors, if any
@@ -149,19 +160,24 @@ def submit_instruction():
     print("Number of passed submission", passed_count)
     print("Number of code submission", code_count)
     print("Number of invalid submission", invalid_count)
+    print("Number of failed submission", failed_count)
     print("Total number of submissions", len(submissions))
 
     with open('instructions.txt', 'a') as f:
         f.write(instruction_text + "\n")
 
-    incorrect_count = total_submissions - passed_count - invalid_count
+    # Check if the counts match the total number of submissions
+    if code_count != failed_count + passed_count + invalid_count:
+        print("Counts do not match")
+    else:
+        print("Counts match")
     
     # End the timer
     end_time = time.time()
     processing_time = end_time - start_time
     print("Time taken:", processing_time)
 
-    return render_template('index.html', instruction=instruction_text, passed_count=passed_count, invalid_count=invalid_count, incorrect_count=incorrect_count,
+    return render_template('index.html', instruction=instruction_text, passed_count=passed_count, invalid_count=invalid_count, failed_count=failed_count,
                        total_submissions=total_submissions, processing_time=processing_time)
 
 
