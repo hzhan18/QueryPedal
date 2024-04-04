@@ -200,7 +200,10 @@ from pedal import *</textarea
             format(processing_time) }} Seconds {% endif %}
           </div>
         </div>
-      </div>
+        <!-- Export Analyzed Results -->
+        <form action="{{ url_for('export_results') }}" method="get">
+          <button type="submit" class="submit-btn">Export Analyzed Results</button>
+        </form>
     </div>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
