@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 # Configuration for the SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = \
-        'sqlite:///' + os.path.join(basedir, '20testentries.db')
+        'sqlite:///' + os.path.join(basedir, '50000entries.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -27,9 +27,14 @@ class CodeState(db.Model):
     contents = db.Column(db.Text, nullable=False)
     contenttype = db.Column(db.String(50), nullable=False)
 
+# Track if an instruction has been submitted
+instruction_submitted = False
 
 @app.route('/')
 def home():
+    global instruction_submitted
+    # Reset the instruction submitted variable
+    instruction_submitted = False
     instruction = request.args.get('instruction', "from pedal import *")
     passed_count = request.args.get('passed_count')
     total_submissions = request.args.get('total_submissions')
@@ -44,13 +49,18 @@ def home():
             except FileNotFoundError:
                 instruction = "No instruction submitted yet."
         return render_template('index.html', documents=documents, instruction=instruction, 
-                               passed_count=passed_count, total_submissions=total_submissions, processing_time=processing_time)
+                               passed_count=passed_count, total_submissions=total_submissions, 
+                               processing_time=processing_time, instruction_submitted=instruction_submitted)
     except Exception as e:
         return str(e)  # display the error on the web page
 
 @app.route('/submit-instruction', methods=['POST'])
 def submit_instruction():
+    global instruction_submitted
     instruction_text = request.form['instruction']
+
+    # Start the timer
+    start_time = time.time()
     
     try:
         # Check instructor script syntax
@@ -72,8 +82,6 @@ def submit_instruction():
         # Cleanup: remove temporary file
         os.remove(instructor_script_filepath)
 
-    # Start the timer
-    start_time = time.time()
 
     # Initialize the counters
     code_count = 0
@@ -83,9 +91,9 @@ def submit_instruction():
 
 
     # Fetch the student submission from the CodeState table
-    # submissions = CodeState.query.all()
+    submissions = CodeState.query.all()
     ### Limit the number of submissions to 200 for testing
-    submissions = CodeState.query.limit(200).all()
+    # submissions = CodeState.query.limit(200).all()
     ### Fetch the last 200 submissions for testing
     # submissions = CodeState.query.order_by(CodeState.id.desc()).limit(200).all()[::-1]
 
@@ -101,8 +109,6 @@ def submit_instruction():
             student_code = submission.contents
             # format the student code
             student_code = textwrap.dedent(student_code)
-            print("Student Submission:")
-            print(student_code)
 
             try:
             # Create temporary files for instructor script and student submission
@@ -123,6 +129,7 @@ def submit_instruction():
                 # Get the output and return it as a JSON response
                 print("result:")
                 print(result.stdout)
+                print(code_count)
 
 
                 # Extract the score from the output
@@ -197,10 +204,11 @@ def submit_instruction():
         writer.writeheader()
         writer.writerow(analyzed_results)
 
+    instruction_submitted = True
     return render_template('index.html', instruction=instruction_text, passed_count=passed_count, invalid_count=invalid_count, failed_count=failed_count,
-                       total_submissions=total_submissions, processing_time=processing_time)
+                       total_submissions=total_submissions, processing_time=processing_time, instruction_submitted=instruction_submitted)
 
-@app.route('/export-results')
+@app.route('/export-results', methods=['GET'])
 def export_results():
     return send_file('analyzed_results.csv', as_attachment=True, download_name='analyzed_results.csv')
 
@@ -210,3 +218,4 @@ if __name__ == '__main__':
         if not CodeState.query.first():
             print("No data found in the database.")
     app.run(debug=True)
+    
