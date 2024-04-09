@@ -126,6 +126,11 @@
         background: #ef6c00;
       }
 
+      .submit-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+      
       @media (max-width: 768px) {
         .main-content {
           grid-template-columns: 1fr;
@@ -200,7 +205,8 @@ from pedal import *</textarea
         </div>
         <!-- Export Analyzed Results -->
         <form action="{{ url_for('export_results') }}" method="get">
-          <button type="submit" class="submit-btn">Export Analyzed Results</button>
+          <button type="submit" class="submit-btn" {% if not instruction_submitted %}disabled{% endif %}>
+            Export Analyzed Results</button>
         </form>
     </div>
     <script>
