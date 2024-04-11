@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 # Configuration for the SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = \
-        'sqlite:///' + os.path.join(basedir, '50000entries.db')
+        'sqlite:///' + os.path.join(basedir, '20entries.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
